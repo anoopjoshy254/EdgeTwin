@@ -72,7 +72,7 @@ class DigitalTwinSimulator:
             response = self.genai_client.models.generate_content(
                 model='gemini-2.5-flash',
                 contents=prompt,
-                config=genai_types.GenerateContentConfig(temperature=0.9)
+                config=genai_types.GenerateContentConfig(temperature=0.7)
             )
             text = response.text.strip()
             print(f"[AI] Report generated ({len(text)} chars)")
@@ -80,9 +80,8 @@ class DigitalTwinSimulator:
         except Exception as e:
             err_str = str(e)
             if 'RESOURCE_EXHAUSTED' in err_str or '429' in err_str or 'quota' in err_str.lower():
-                print("[AI] Daily quota exhausted — AI reports disabled for this session.")
-                self.ai_enabled = False
-                return None
+                print("[AI] Rate-limited — skipping this report, will retry next time.")
+                return None  # Don't disable AI permanently — just skip this one
             print(f"[AI] Error: {err_str[:200]}")
             return None
 
@@ -106,7 +105,7 @@ class DigitalTwinSimulator:
         idx = 0
         failure_count = 0
         last_report_time = 0.0
-        COOLDOWN_SEC = 30
+        COOLDOWN_SEC = 60  # Increased to 60s to avoid rate limiting
 
         print(f"[Stream] Starting stream for {machine_type} (AI={'ON' if self.ai_enabled else 'OFF'})")
 

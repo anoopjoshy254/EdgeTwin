@@ -9,24 +9,22 @@ import email_notifier
 
 from digital_twin_core import DigitalTwinSimulator
 
+# ── Hardcoded Credentials ───────────────────────────────────────────────────────
+HARDCODED_API_KEY = "AIzaSyBqYfUC9vkUn0IfagFmhprRZXNwEq578XM"
+HARDCODED_SENDER_EMAIL = "anoopjoshy254@gmail.com"
+HARDCODED_SENDER_PASSWORD = "Lizzyjoshy@2"
+
 # ── CLI args ──────────────────────────────────────────────────────────────────
 parser = argparse.ArgumentParser(description="Digital Twin FastAPI Server")
-parser.add_argument("--csv",              required=True,  help="Path to machine_failure_dataset.csv")
-parser.add_argument("--api-key",          default=None,   help="Gemini API Key")
-parser.add_argument("--sender-email",     default=None,   help="Gmail address to send alerts from")
-parser.add_argument("--sender-password",  default=None,   help="Gmail App Password for sender account")
+parser.add_argument("--csv", required=True, help="Path to machine_failure_dataset.csv")
 args, _ = parser.parse_known_args()
 
 # ── Configure email notifier ──────────────────────────────────────────────────
-if args.sender_email and args.sender_password:
-    email_notifier.configure(args.sender_email, args.sender_password)
-    print(f"[Email] Configured sender: {args.sender_email}")
-else:
-    print("[Email] No sender credentials provided — email alerts disabled. "
-          "Use --sender-email and --sender-password to enable.")
+email_notifier.configure(HARDCODED_SENDER_EMAIL, HARDCODED_SENDER_PASSWORD)
+print(f"[Email] Configured sender: {HARDCODED_SENDER_EMAIL}")
 
 # ── Singleton simulator ───────────────────────────────────────────────────────
-simulator = DigitalTwinSimulator(csv_path=args.csv, api_key=args.api_key)
+simulator = DigitalTwinSimulator(csv_path=args.csv, api_key=HARDCODED_API_KEY)
 
 # ── In-memory state ───────────────────────────────────────────────────────────
 registered_devices: List[dict] = []
