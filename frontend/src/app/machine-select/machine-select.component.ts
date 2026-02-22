@@ -58,7 +58,7 @@ export class MachineSelectComponent implements AfterViewInit, OnDestroy {
         gsap.from('.machine-card', {
             opacity: 0, y: 80, stagger: 0.2, duration: 0.9, delay: 0.6, ease: 'back.out(1.7)'
         });
-        gsap.from('.register-btn', { opacity: 0, scale: 0.8, duration: 0.6, delay: 1.2, ease: 'back.out(1.7)' });
+        gsap.from('.opts-row', { opacity: 0, scale: 0.8, duration: 0.6, delay: 1.2, ease: 'back.out(1.7)' });
 
         const canvases = [this.latheCanvasRef, this.drillCanvasRef, this.millCanvasRef];
         canvases.forEach((ref, i) => this.initThreePreview(ref.nativeElement, this.cards[i]));

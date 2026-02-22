@@ -65,10 +65,13 @@
       }
     </div>
 
-    <button class="register-btn" (click)="openModal()">
-      + Register New Device
-    </button>
+    <div class="opts-row">
+      <button class="register-btn" (click)="openModal()">
+        + Register New Device
+      </button>
+    </div>
   </div>
+
 
   <!-- Registration Modal -->
   @if (showModal) {
