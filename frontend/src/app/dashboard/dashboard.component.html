@@ -1,0 +1,88 @@
+<div class="dashboard-root" [class.failure-mode]="status === 'FAILURE'">
+    <!-- Header -->
+    <header class="dash-header">
+        <button class="back-btn" (click)="goBack()">← Back</button>
+        <div class="machine-title">
+            <span class="machine-icon">⚙️</span>
+            <h1>{{ machineType }} <span class="monitor-txt">Monitor</span></h1>
+        </div>
+        <div class="status-badge" [class.failure]="status === 'FAILURE'" [class.normal]="status === 'NORMAL'">
+            <span class="pulse-dot"></span>
+            {{ status }}
+        </div>
+        <div class="live-meta" *ngIf="latest">
+            <span>Failures: <b>{{ latest.failure_count }}</b></span>
+            <span>Confidence: <b>{{ latest.confidence | number:'1.1-1' }}%</b></span>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="dash-body">
+
+        <!-- Left: Three.js Machine Animation -->
+        <div class="three-panel">
+            <div class="panel-label">LIVE MACHINE VIEW</div>
+            <canvas #machineCanvas></canvas>
+            <div class="machine-stats" *ngIf="latest">
+                <div class="stat"><span>TEMP</span><b>{{ latest.temp }}°C</b></div>
+                <div class="stat"><span>VIB</span><b>{{ latest.vib }} mm/s</b></div>
+                <div class="stat"><span>POWER</span><b>{{ latest.pwr }} kW</b></div>
+                <div class="stat"><span>HUMID</span><b>{{ latest.hum }}%</b></div>
+            </div>
+        </div>
+
+        <!-- Center: Sensor Charts -->
+        <div class="chart-grid">
+            <div class="panel-label">LIVE SENSOR DATA</div>
+            <div class="chart-wrap">
+                <div class="chart-card">
+                    <div class="chart-title temp-clr">⬆ Temperature</div>
+                    <canvas id="tempChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title vib-clr">〜 Vibration</div>
+                    <canvas id="vibChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title pwr-clr">⚡ Power</div>
+                    <canvas id="pwrChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title hum-clr">💧 Humidity</div>
+                    <canvas id="humChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: AI Reports -->
+        <div class="report-panel">
+            <div class="panel-label">AI INCIDENT REPORTS</div>
+            <div class="report-info">Triggered every 3 failures</div>
+            <div class="reports-scroll">
+                @if (reports.length === 0) {
+                <div class="no-reports">
+                    <div class="no-reports-icon">🤖</div>
+                    <p>Monitoring active.</p>
+                    <p>AI reports will appear here after every 3rd failure detection.</p>
+                </div>
+                }
+                @for (r of reports; track r.id) {
+                <div class="report-card">
+                    <div class="report-header">
+                        <span class="report-badge">🚨 FAILURE #{{ r.failure_count }}</span>
+                        <span class="report-time">{{ r.time }}</span>
+                    </div>
+                    <div class="report-sensors">
+                        <span>{{ r.sensors.temp }}°C</span>
+                        <span>{{ r.sensors.vib }} mm/s</span>
+                        <span>{{ r.sensors.pwr }} kW</span>
+                        <span>{{ r.sensors.hum }}%</span>
+                    </div>
+                    <pre class="report-text">{{ r.text }}</pre>
+                </div>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>

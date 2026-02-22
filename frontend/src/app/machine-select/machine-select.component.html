@@ -1,0 +1,108 @@
+<section class="selector-root">
+  <!-- Animated particle backdrop -->
+  <canvas class="particle-canvas" id="particleCanvas"></canvas>
+
+  <div class="content-wrap">
+    <div class="hero-title">
+      <span class="badge">INDUSTRIAL IoT</span>
+      <h1>Machine <span class="accent">Digital Twin</span></h1>
+    </div>
+    <p class="hero-sub">Select a machine to begin live monitoring, anomaly detection & AI incident analysis.</p>
+
+    <!-- ── Email Alert Registration ─────────────────────────────────────── -->
+    <div class="email-register-bar">
+      @if (!registeredEmail) {
+      <div class="email-form-row">
+        <span class="alert-icon">📧</span>
+        <div class="email-label">
+          <strong>Failure Alert Emails</strong>
+          <span>Get AI incident reports emailed after every 3 failures</span>
+        </div>
+        <input type="email" class="email-input" [(ngModel)]="emailInput" name="alertEmail" placeholder="your@email.com"
+          (keydown.enter)="submitEmail()" />
+        <button class="email-submit-btn" (click)="submitEmail()" [disabled]="emailSubmitting">
+          {{ emailSubmitting ? 'Saving…' : 'Enable Alerts' }}
+        </button>
+      </div>
+      @if (emailError) {
+      <div class="email-error">⚠ {{ emailError }}</div>
+      }
+      } @else {
+      <div class="email-registered-row">
+        <span class="alert-icon">✅</span>
+        <div class="email-label">
+          <strong>Alert emails active</strong>
+          <span>Reports will be sent to <b>{{ registeredEmail }}</b></span>
+        </div>
+        <button class="email-unregister-btn" (click)="unregisterEmail()">Unsubscribe</button>
+      </div>
+      }
+    </div>
+
+    <div class="cards-row">
+      @for (card of cards; track card.type; let i = $index) {
+      <div class="machine-card" (click)="selectMachine(card)" (mouseenter)="hoverCard(card, true)"
+        (mouseleave)="hoverCard(card, false)">
+        <div class="card-glow" [style.--clr]="card.color"></div>
+        <div class="canvas-wrap">
+          @if (card.type === 'Lathe') {
+          <canvas #latheCanvas width="220" height="180"></canvas>
+          } @else if (card.type === 'Drill') {
+          <canvas #drillCanvas width="220" height="180"></canvas>
+          } @else {
+          <canvas #millCanvas width="220" height="180"></canvas>
+          }
+        </div>
+        <div class="card-body">
+          <span class="card-icon">{{ card.icon }}</span>
+          <h3 [style.color]="card.color">{{ card.label }}</h3>
+          <p>{{ card.desc }}</p>
+          <button class="launch-btn" [style.--clr]="card.color">
+            Launch Monitor →
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+
+    <button class="register-btn" (click)="openModal()">
+      + Register New Device
+    </button>
+  </div>
+
+  <!-- Registration Modal -->
+  @if (showModal) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeModal()">✕</button>
+      <h2>Register New Device</h2>
+      <form (ngSubmit)="submitDevice()">
+        <label>Device Name</label>
+        <input [(ngModel)]="newDevice.name" name="name" required placeholder="e.g. Lathe Unit 3" />
+        <label>Machine Type</label>
+        <select [(ngModel)]="newDevice.machine_type" name="machine_type">
+          @for (m of machineOptions; track m) {
+          <option>{{ m }}</option>
+          }
+        </select>
+        <label>Serial Number</label>
+        <input [(ngModel)]="newDevice.serial_number" name="serial_number" placeholder="e.g. SN-20241201" />
+        <label>Location</label>
+        <input [(ngModel)]="newDevice.location" name="location" placeholder="e.g. Factory Floor B, Bay 4" />
+        <button type="submit" class="submit-btn">Register Device</button>
+      </form>
+      @if (devices.length > 0) {
+      <div class="device-list">
+        <h3>Registered Devices</h3>
+        @for (d of devices; track d.id) {
+        <div class="device-item">
+          <span class="device-name">{{ d.name }}</span>
+          <span class="device-meta">{{ d.machine_type }} · {{ d.location }}</span>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  }
+</section>
